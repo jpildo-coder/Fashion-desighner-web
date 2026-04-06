@@ -29,21 +29,24 @@ const observer = new IntersectionObserver((entries, observer) => {
 const animatedElements = document.querySelectorAll('.fade-up, .fade-in');
 animatedElements.forEach(el => observer.observe(el));
 
-// 3. Form Submission Handling (Frontend Mockup)
+// 3. Form Submission Handling (Google Forms Integration)
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
+    contactForm.addEventListener('submit', () => {
         const btn = contactForm.querySelector('.btn');
-        const originalText = btn.textContent;
-        
-        // Simulating sending state
-        btn.textContent = 'Sending...';
-        btn.style.opacity = '0.7';
-        btn.disabled = true;
-        
-        setTimeout(() => {
+        if (btn) {
+            btn.textContent = 'Sending...';
+            btn.style.opacity = '0.7';
+            btn.disabled = true;
+        }
+    });
+}
+
+// Called by iframe onload in index.html when Google Form succeeds
+window.contactFormSubmitted = function() {
+    if (contactForm) {
+        const btn = contactForm.querySelector('.btn');
+        if (btn) {
             // Success State
             btn.textContent = 'Inquiry Sent Successfully';
             btn.style.backgroundColor = '#f9f9f9';
@@ -52,14 +55,15 @@ if (contactForm) {
             
             // clear form
             contactForm.reset();
+            submitted = false;
             
             // Revert back after a few seconds
             setTimeout(() => {
-                btn.textContent = originalText;
+                btn.textContent = 'Send Inquiry';
                 btn.style.backgroundColor = 'transparent';
                 btn.style.color = '#f9f9f9';
                 btn.disabled = false;
             }, 4000);
-        }, 1500);
-    });
-}
+        }
+    }
+};
